@@ -104,12 +104,28 @@ def get_video_details(youtube, video_ids):
     return all_video_stats
 video_details = get_video_details(youtube, video_ids)
 video_data = pd.DataFrame(video_details)
+video_data['Published_date'] = pd.to_datetime(video_data['Published_date']).dt.date
+video_data['Views'] = pd.to_numeric(video_data['Views'])
+video_data['Likes'] = pd.to_numeric(video_data['Likes'])
+video_data['Comments'] = pd.to_numeric(video_data['Comments'])
+
+top10_videos = video_data.sort_values(by='Views', ascending=False).head(10)
+
+#average published video per month
+video_data['Month'] = pd.to_datetime(video_data['Published_date']).dt.strftime('%b')
+
+#gets you the amt of videos published per month
+videos_per_month = video_data.groupby('Month', as_index=False).size()
+sort_order = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+videos_per_month.index = pd.CategoricalIndex(videos_per_month['Month'], categories=sort_order, ordered=True) #sorts by month and fixes the index so it uses months as index
+videos_per_month = videos_per_month.sort_index()
 
 print("API key:", api_key)
 print(channel_data)
 print("YouTube Analytics module executed successfully.")
 print(video_ids)
 print(video_data)
+print(videos_per_month)
 
 # Converting data types so they can be used in visualizations
 channel_data['Subscribers'] = pd.to_numeric(channel_data['Subscribers'])
@@ -117,15 +133,29 @@ channel_data['Views'] = pd.to_numeric(channel_data['Views'])
 channel_data['Total_videos'] = pd.to_numeric(channel_data['Total_videos'])
 print(channel_data.dtypes)
 
+#prints top ten videos of a channel by views
+print(top10_videos)
 
 
 
 # Visualization using seaborn
-# sns.set(rc={'figure.figsize':(10,8)})
-# ax = sns.barplot(x='Channel_name', y='Subscribers', data=channel_data) #example getting bar plot for subscribers
-# plt.show()
-# ax = sns.barplot(x='Channel_name', y='Views', data=channel_data) #example getting bar plot for views
-# plt.show()
-# ax = sns.barplot(x='Channel_name', y='Total_videos', data=channel_data) #example getting bar plot for total videos
-# plt.show()
+sns.set(rc={'figure.figsize':(10,8)})
+ax = sns.barplot(x='Channel_name', y='Subscribers', data=channel_data) #example getting bar plot for subscribers
+plt.show()
+ax = sns.barplot(x='Channel_name', y='Views', data=channel_data) #example getting bar plot for views
+plt.show()
+ax = sns.barplot(x='Channel_name', y='Total_videos', data=channel_data) #example getting bar plot for total videos
+plt.show()
 
+
+# Visualization for top 10 videos by views
+ax1 = sns.barplot(x='Views', y='Title', data=top10_videos)
+plt.show()
+
+#visualization for videos published per month
+ax2 = sns.barplot(x='Month', y='size', data=videos_per_month)
+plt.show()
+
+
+#if you wanted to load this data frame data into a csv
+# video_data.to_csv('Video_Details(Ken Jee).csv')
