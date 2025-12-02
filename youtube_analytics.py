@@ -376,62 +376,115 @@ videos_per_month = videos_per_month.sort_index()
 
  
 
-print("API key:", api_key)
+# print("API key:", api_key)
 
-print(channel_data)
+# print(channel_data)
 
-print("YouTube Analytics module executed successfully.")
+# print("YouTube Analytics module executed successfully.")
 
-print(video_ids)
+# print(video_ids)
 
-print(video_data)
+# print(video_data)
 
-print(videos_per_month)
-
- 
-
-channel_data['Subscribers'] = pd.to_numeric(channel_data['Subscribers'])
-
-channel_data['Views'] = pd.to_numeric(channel_data['Views'])
-
-channel_data['Total_videos'] = pd.to_numeric(channel_data['Total_videos'])
+# print(videos_per_month)
 
  
 
-print(channel_data.dtypes)
+# channel_data['Subscribers'] = pd.to_numeric(channel_data['Subscribers'])
+
+# channel_data['Views'] = pd.to_numeric(channel_data['Views'])
+
+# channel_data['Total_videos'] = pd.to_numeric(channel_data['Total_videos'])
 
  
 
-print(top10_videos)
+# print(channel_data.dtypes)
 
  
 
-sns.set(rc={'figure.figsize': (10, 8)})
-
-ax = sns.barplot(x='Channel_name', y='Subscribers', data=channel_data)
-
-plt.show()
-
-ax = sns.barplot(x='Channel_name', y='Views', data=channel_data)
-
-plt.show()
-
-ax = sns.barplot(x='Channel_name', y='Total_videos', data=channel_data)
-
-plt.show()
+# print(top10_videos)
 
  
 
-ax1 = sns.barplot(x='Views', y='Title', data=top10_videos)
+# sns.set(rc={'figure.figsize': (10, 8)})
 
-plt.show()
+# ax = sns.barplot(x='Channel_name', y='Subscribers', data=channel_data)
+
+# plt.show()
+
+# ax = sns.barplot(x='Channel_name', y='Views', data=channel_data)
+
+# plt.show()
+
+# ax = sns.barplot(x='Channel_name', y='Total_videos', data=channel_data)
+
+# plt.show()
 
  
 
-ax2 = sns.barplot(x='Month', y='size', data=videos_per_month)
+# ax1 = sns.barplot(x='Views', y='Title', data=top10_videos)
 
-plt.show()
+# plt.show()
 
  
+
+# ax2 = sns.barplot(x='Month', y='size', data=videos_per_month)
+
+# plt.show()
+
+ 
+
+
+def get_top_videos(api_key, max_results=200):
+    youtube = build('youtube', 'v3', developerKey=api_key)
+    
+    videos = []
+    next_page_token = None
+    
+    while len(videos) < max_results:
+        request = youtube.videos().list(
+            part='snippet,statistics',
+            chart='mostPopular',
+            regionCode='US',
+            maxResults=min(50, max_results - len(videos)),
+            pageToken=next_page_token
+        )
+        
+        response = request.execute()
+        
+        for item in response['items']:
+            title = item['snippet']['title']
+            video_id = item['id']
+            video_url = f'https://www.youtube.com/watch?v={video_id}'
+            view_count = item['statistics'].get('viewCount', 0)
+            like_count = item['statistics'].get('likeCount', 0)
+            category_id = item['snippet']['categoryId']
+            category_name = get_category_name(category_id)
+            
+            videos.append({
+                'title': title,
+                'url': video_url,
+                'views': view_count,
+                'likes': like_count,
+                'category': category_name
+            })
+        
+        next_page_token = response.get('nextPageToken')
+        if not next_page_token:
+            break
+    
+    return videos
+
+
+# Print the results
+top_videos = get_top_videos(api_key, max_results=500)
+
+print(f"Top {len(top_videos)} Videos:")
+for idx, video in enumerate(top_videos, start=1):
+    print(f"{idx}. {video['title']}")
+    print(f"   Link: {video['url']}")
+    print(f"   Views: {video['views']}")
+    print(f"   Likes: {video['likes']}")
+    print(f"   Category: {video['category']}\n")
 
 # video_data.to_csv('Video_Details(Ken Jee).csv')
