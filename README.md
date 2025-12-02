@@ -5,8 +5,10 @@ We call the Api to get the top 200 trending vidoes for the day then grab their c
 
 
 # Setup
-1.Pull from this repo
-2.Create in the root a .env file and add the API_KEY=google key variable. The Api key is in a txt file called API_KEY_INFO.txt
+1. Pull from this repository.
+2. Create in the root a .env file and add the API_KEY=google key variable. The Api key is in a txt file called API_KEY_INFO.txt
 3. pip install all packages used (pandas, dotenv, seaborn, google-api-python-client) ex: pip install google-api-python-client
-4. save and run code.
+4. Normally dataloading.py would be ran first. However, our database (youtube_data.json) is already included, so skip this step.
+5. Run EDA.py to view the initial distributions of our variables of interest.
+6. Run decisiontree.py and TFIDF_Clustering.py in either order to view our analysis.
 
