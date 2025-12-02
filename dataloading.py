@@ -1,9 +1,9 @@
 from googleapiclient.discovery import build
 from pathlib import Path
 import json
-
+import os
 # Load API key from .env file
-API_KEY = 'AIzaSyDuFxgCw-PqdwQIHROPdJzCChqsPtikXII'
+API_KEY = os.getenv('API_KEY')
 
 youtube = build("youtube", "v3", developerKey=API_KEY)
 
