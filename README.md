@@ -6,27 +6,7 @@ We call the Api to get the top 200 trending vidoes for the day then grab their c
 
 # Setup
 1.Pull from this repo
-2.Create in the root a .env file and add the API_KEY=google key variable. 
+2.Create in the root a .env file and add the API_KEY=google key variable. The Api key is in a txt file called API_KEY_INFO.txt
 3. pip install all packages used (pandas, dotenv, seaborn, google-api-python-client) ex: pip install google-api-python-client
 4. save and run code.
 
-# Packadge Desc.
-    Pandas: 
-
-    Dotenv:
-
-    Pathlib:
-
-    OS:
-
-    Google-api-python-client:
-
-    Numpy:
-
-    JSON:
-
-    Sklearn.feature_extraction.text:
-
-    Sklearn.cluster:
-
-    matplotlib.pyplot:
